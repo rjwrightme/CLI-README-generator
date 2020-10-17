@@ -29,24 +29,28 @@ inquirer
         type: 'input',
         name: 'readmeTitle',
         message: 'What is your README title?',
+        default: 'Repo Title Goes Here',
         when: (answers) => answers.settings.includes('Title'),
       },
       {
         type: 'input',
         name: 'readmeDescription',
         message: 'What is your README description?',
+        default: 'Repo description goes here',
         when: (answers) => answers.settings.includes('Description'),
       },
       {
         type: 'input',
         name: 'install01',
         message: 'Install instructions step 1. (If you have a code block example, save it for the next step.',
+        default: 'Install instructions go here',
         when: (answers) => answers.settings.includes('Install Instructions'),
       },
       {
         type: 'input',
         name: 'install01code',
         message: 'Have example code to show? Add it here. We\'ll format it for you. If not, just hit Enter.',
+        default: 'const exampleCode = "goes here"',
         when: (answers) => answers.settings.includes('Install Instructions'),
       },
       {
@@ -59,12 +63,14 @@ inquirer
         type: 'input',
         name: 'install02',
         message: 'Install instructions step 2. (If you have a code block example, save it for the next step.',
+        default: 'Install instructions go here',
         when: (answers) => answers.install02confirm,
       },
       {
         type: 'input',
         name: 'install02code',
         message: 'Have example code to show? Add it here. We\'ll format it for you. If not, just hit Enter.',
+        default: 'const exampleCode = "goes here"',
         when: (answers) => answers.install02confirm,
       },
       {
@@ -77,12 +83,14 @@ inquirer
         type: 'input',
         name: 'install03',
         message: 'Install instructions step 3. (If you have a code block example, save it for the next step.',
+        default: 'Install instructions go here',
         when: (answers) => answers.install03confirm,
       },
       {
         type: 'input',
         name: 'install03code',
         message: 'Have example code to show? Add it here. We\'ll format it for you. If not, just hit Enter.',
+        default: 'const exampleCode = "goes here"',
         when: (answers) => answers.install03confirm,
       },
       {
@@ -95,12 +103,14 @@ inquirer
         type: 'input',
         name: 'install04',
         message: 'Install instructions step 4. (If you have a code block example, save it for the next step.',
+        default: 'Install instructions go here',
         when: (answers) => answers.install04confirm,
       },
       {
         type: 'input',
         name: 'install04code',
         message: 'Have example code to show? Add it here. We\'ll format it for you. If not, just hit Enter.',
+        default: 'const exampleCode = "goes here"',
         when: (answers) => answers.install04confirm,
       },
       {
@@ -113,12 +123,14 @@ inquirer
         type: 'input',
         name: 'install05',
         message: 'Install instructions step 5. (If you have a code block example, save it for the next step.',
+        default: 'Install instructions go here',
         when: (answers) => answers.install05confirm,
       },
       {
         type: 'input',
         name: 'install05code',
         message: 'Have example code to show? Add it here. We\'ll format it for you. If not, just hit Enter.',
+        default: 'const exampleCode = "goes here"',
         when: (answers) => answers.install05confirm,
       },
       {
@@ -179,30 +191,59 @@ inquirer
         type: 'input',
         name: 'name',
         message: 'What is your name?',
-        when: (answers) => answers.contact.includes('Name'),
+        when: (answers) => {
+            if (answers.settings.includes('Contact Info')) {
+                if (answers.contact.includes('Name')) {
+                    return true;
+                }
+            }
+            
+        }
       },
       {
         type: 'input',
         name: 'email',
         message: 'What is your email?',
-        when: (answers) => answers.contact.includes('email'),
+        when: (answers) => {
+            if (answers.settings.includes('Contact Info')) {
+                if (answers.contact.includes('email')) {
+                    return true;
+                }
+            }
+            
+        }
       },
       {
         type: 'input',
         name: 'twitter',
         message: 'What is your Twitter handle?',
-        when: (answers) => answers.contact.includes('@Twitter'),
+        when: (answers) => {
+            if (answers.settings.includes('Contact Info')) {
+                if (answers.contact.includes('@Twitter')) {
+                    return true;
+                }
+            }
+            
+        }
       },
       {
         type: 'input',
         name: 'linkedIn',
         message: 'What is your LinkedIn URL?',
-        when: (answers) => answers.contact.includes('LinkedIn URL'),
+        when: (answers) => {
+            if (answers.settings.includes('Contact Info')) {
+                if (answers.contact.includes('LinkedIn URL')) {
+                    return true;
+                }
+            }
+            
+        }
       },
     ])
-    .then( answers => console.log(answers));
+    .then( answers => buildReadme(answers))
+    .catch( error => console.error(error));
 
-
-// function buildReadme(info) {
-
-// }
+// Generate README file
+function buildReadme(info) {
+console.log(info);
+}
