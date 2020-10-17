@@ -281,17 +281,16 @@ function licenseBadge(license) {
 
 function buildInstallInstructions(info) {
     let installInstructions = `## Installation\n`;
-    for (let i = 1; i < 6; i++) {
-        if (info.install0+i) {
-            installInstructions += `${i}. ${info.install0+i}\n`;
-            if (info.install0+i+code) {
-                installInstructions += "```\n" + info.install0+i+code + "\n```";
+    for (let i = 1; i <= 6; i++) {
+        if (info["install0"+i]) {
+            installInstructions += `${i}. ${info["install0"+i]}\n`;
+            if (info["install0"+i+"code"]) {
+                installInstructions += "```\n" + info["install0"+i+"code"] + "\n```\n";
             }
         } else {
             return installInstructions;
         }
     }
-    return installInstructions;
 }
 
 // Build Table of Contents
