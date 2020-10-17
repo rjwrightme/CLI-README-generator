@@ -163,7 +163,8 @@ inquirer
       {
         type: 'input',
         name: 'screenshots',
-        message: 'Please enter the relative path to your screenshots. If you have multiples, separate each one with a comma. Eg ./screenshots/image01.png, ./screenshots/image02.png',
+        message: 'Please enter the relative path to your screenshots. If you have multiples, separate each one with a comma.',
+        default: '../screenshots/image01.png,../screenshots/image02.png',
         when: (answers) => answers.settings.includes('Screenshots'),
       },
       {
@@ -263,6 +264,18 @@ if (info.settings.includes('Table of Contents')) {
 if(info.settings.includes('Install Instructions')) {
     readmeData += buildInstallInstructions(info);
 }
+if(info.settings.includes('Usage Instructions')) {
+    readmeData += `## Usage\n${info.usage}\n`;
+}
+if(info.settings.includes('License')) {
+    readmeData += buildLicense(info.license);
+}
+if(info.settings.includes('Contribution Instructions')) {
+    readmeData += `## Contributing\n${info.contributors}\n`;
+}
+if(info.settings.includes('Screenshots')) {
+    readmeData += buildScreenshots(info.screenshots);
+}
 saveReadme(readmeData, info.fileName, info.filePath);
 }
 
@@ -279,6 +292,13 @@ function licenseBadge(license) {
     }
 }
 
+function buildLicense(license) {
+    let licenseSection = `## License\n`;
+    licenseSection += `Distributed under the ${license} License. See \`LICENSE\` for more information.\n`;
+    licenseSection += licenseBadge(license) + '\n';
+    return licenseSection;
+}
+
 function buildInstallInstructions(info) {
     let installInstructions = `## Installation\n`;
     for (let i = 1; i <= 6; i++) {
@@ -291,6 +311,15 @@ function buildInstallInstructions(info) {
             return installInstructions;
         }
     }
+}
+
+function buildScreenshots(screenshots) {
+    const imgArray = screenshots.split(',');
+    let screenshotCode = '## Screenshots\n';
+    for (let i = 0; i < imgArray.length; i++) {
+        screenshotCode += `![Screen Shot 0${i+1}](${imgArray[i]})\n`;
+    }
+    return screenshotCode;
 }
 
 // Build Table of Contents
