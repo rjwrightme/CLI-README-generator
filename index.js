@@ -2,23 +2,7 @@
 const inquirer = require("inquirer");
 const fs = require("fs");
 
-// Questions for README Generator
-/*
-1. What is the title of your README?
-2. Write a short description.
-3. Table of Contents
-4. Installation instructions
-5. Usage instructions
-6. Select a license for your repo
-7. Instructions for contributing to the project
-7a Screenshots
-8. Tests
-9. Questions
-10. LinkedIn url
-
-*/
-
-// README settings
+// README Inquirer questions
 inquirer
     .prompt([
     {
@@ -26,7 +10,7 @@ inquirer
         name: 'settings',
         message: 'What elements would you like in your README?',
         choices: [
-          'Title', 'Description', 'Table of Contents', 'Install Instructions', 'License', 'Contribution Instructions', 'Screenshots', 'Testing Instructions', 'Questions', 'LinkedIn URL',
+          'Title', 'Description', 'Table of Contents', 'Install Instructions', 'Usage Instructions', 'License', 'Contribution Instructions', 'Screenshots', 'Testing Instructions', 'FAQ', 'Contact Info',
         ],
       },
       {
@@ -136,6 +120,84 @@ inquirer
         name: 'install05code',
         message: 'Have example code to show? Add it here. We\'ll format it for you. If not, just hit Enter.',
         when: (answers) => answers.install05confirm,
+      },
+      {
+        type: 'input',
+        name: 'usage',
+        message: 'What are your instructions for using your repo?',
+        when: (answers) => answers.settings.includes('Usage Instructions'),
+      },
+      {
+        type: 'list',
+        name: 'license',
+        message: 'What license do you want to use for your repo?',
+        choices: ['MIT', 'Apache 2.0', 'GNU General Public License 3.0', 'The Unlicense'],
+        default: 'MIT',
+        when: (answers) => answers.settings.includes('License'),
+      },
+      {
+        type: 'input',
+        name: 'contributors',
+        message: 'What are your instructions for contributors to your repo?',
+        default: `Any contributions you make are **greatly appreciated**. Just make sure to create a new branch first.
+        
+        1. Fork the Project
+        2. Create your Feature Branch (\`git checkout -b feature/AmazingFeature\`)
+        3. Commit your Changes (\`git commit -m 'Add some AmazingFeature'\`)
+        4. Push to the Branch (\`git push origin feature/AmazingFeature\`)
+        5. Open a Pull Request`,
+        when: (answers) => answers.settings.includes('Contribution Instructions'),
+      },
+      {
+        type: 'input',
+        name: 'screenshots',
+        message: 'Please enter the relative path to your screenshots. If you have multiples, separate each one with a comma. Eg ./screenshots/image01.png, ./screenshots/image02.png',
+        when: (answers) => answers.settings.includes('Screenshots'),
+      },
+      {
+        type: 'input',
+        name: 'tests',
+        message: 'What are your instructions for running tests?',
+        when: (answers) => answers.settings.includes('Testing Instructions'),
+      },
+      {
+        type: 'input',
+        name: 'faq',
+        message: 'List your FAQs with corresponding answers',
+        when: (answers) => answers.settings.includes('FAQ'),
+      },
+      {
+        type: 'checkbox',
+        name: 'contact',
+        message: 'What contact info would you like to provide?',
+        choices: [
+          'Name', 'email', '@Twitter', 'LinkedIn URL',
+        ],
+        when: (answers) => answers.settings.includes('Contact Info'),
+      },
+      {
+        type: 'input',
+        name: 'name',
+        message: 'What is your name?',
+        when: (answers) => answers.contact.includes('Name'),
+      },
+      {
+        type: 'input',
+        name: 'email',
+        message: 'What is your email?',
+        when: (answers) => answers.contact.includes('email'),
+      },
+      {
+        type: 'input',
+        name: 'twitter',
+        message: 'What is your Twitter handle?',
+        when: (answers) => answers.contact.includes('@Twitter'),
+      },
+      {
+        type: 'input',
+        name: 'linkedIn',
+        message: 'What is your LinkedIn URL?',
+        when: (answers) => answers.contact.includes('LinkedIn URL'),
       },
     ])
     .then( answers => console.log(answers));
