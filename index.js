@@ -1,6 +1,7 @@
 // Require modules
 const inquirer = require("inquirer");
 const fs = require("fs");
+require('console-success');
 
 // README Inquirer questions
 inquirer
@@ -137,6 +138,7 @@ inquirer
         type: 'input',
         name: 'usage',
         message: 'What are your instructions for using your repo?',
+        default: 'This is how you use this app...',
         when: (answers) => answers.settings.includes('Usage Instructions'),
       },
       {
@@ -151,13 +153,12 @@ inquirer
         type: 'input',
         name: 'contributors',
         message: 'What are your instructions for contributors to your repo?',
-        default: `Any contributions you make are **greatly appreciated**. Just make sure to create a new branch first.
-        
-        1. Fork the Project
-        2. Create your Feature Branch (\`git checkout -b feature/AmazingFeature\`)
-        3. Commit your Changes (\`git commit -m 'Add some AmazingFeature'\`)
-        4. Push to the Branch (\`git push origin feature/AmazingFeature\`)
-        5. Open a Pull Request`,
+        default: `Any contributions you make are **greatly appreciated**. Just make sure to create a new branch first.\n
+        1. Fork the Project\n
+        2. Create your Feature Branch (\`git checkout -b feature/AmazingFeature\`)\n
+        3. Commit your Changes (\`git commit -m 'Add some AmazingFeature'\`)\n
+        4. Push to the Branch (\`git push origin feature/AmazingFeature\`)\n
+        5. Open a Pull Request\n`,
         when: (answers) => answers.settings.includes('Contribution Instructions'),
       },
       {
@@ -171,12 +172,14 @@ inquirer
         type: 'input',
         name: 'tests',
         message: 'What are your instructions for running tests?',
+        default: 'Automated test are run with jest...',
         when: (answers) => answers.settings.includes('Testing Instructions'),
       },
       {
         type: 'input',
         name: 'faq',
         message: 'List your FAQs with corresponding answers',
+        default: 'FAQs go here',
         when: (answers) => answers.settings.includes('FAQ'),
       },
       {
@@ -192,6 +195,7 @@ inquirer
         type: 'input',
         name: 'name',
         message: 'What is your name?',
+        default: 'John Doe',
         when: (answers) => {
             if (answers.settings.includes('Contact Info')) {
                 if (answers.contact.includes('Name')) {
@@ -205,6 +209,7 @@ inquirer
         type: 'input',
         name: 'email',
         message: 'What is your email?',
+        default: 'example@mail.com',
         when: (answers) => {
             if (answers.settings.includes('Contact Info')) {
                 if (answers.contact.includes('email')) {
@@ -218,6 +223,7 @@ inquirer
         type: 'input',
         name: 'twitter',
         message: 'What is your Twitter handle?',
+        default: '@twitter',
         when: (answers) => {
             if (answers.settings.includes('Contact Info')) {
                 if (answers.contact.includes('@Twitter')) {
@@ -231,6 +237,7 @@ inquirer
         type: 'input',
         name: 'linkedIn',
         message: 'What is your LinkedIn URL?',
+        default: 'https://www.linkedin.com/in/profileName/',
         when: (answers) => {
             if (answers.settings.includes('Contact Info')) {
                 if (answers.contact.includes('LinkedIn URL')) {
@@ -245,9 +252,7 @@ inquirer
     .catch( error => console.error(error));
 
 // Generate README file
-// 'Title', 'Description', 'Table of Contents', 'Install Instructions', 'Usage Instructions', 'License', 'Contribution Instructions', 'Screenshots', 'Testing Instructions', 'FAQ', 'Contact Info',
 function buildReadme(info) {
-// console.log(info);
 let readmeData = '';
 if(info.settings.includes('License')) {
     readmeData += licenseBadge(info.license);
@@ -275,6 +280,15 @@ if(info.settings.includes('Contribution Instructions')) {
 }
 if(info.settings.includes('Screenshots')) {
     readmeData += buildScreenshots(info.screenshots);
+}
+if(info.settings.includes('Testing Instructions')) {
+  readmeData += `## Tests\n${info.tests}\n`;
+}
+if(info.settings.includes('FAQ')) {
+  readmeData += `## FAQ\n${info.faq}\n`;
+}
+if(info.settings.includes('Contact Info')) {
+  readmeData += buildContactInfo(info);
 }
 saveReadme(readmeData, info.fileName, info.filePath);
 }
@@ -352,8 +366,33 @@ function buildToC(info) {
     return tableOfContents;
 }
 
+function buildContactInfo(info) {
+    let contactInfo = '## Contact\n';
+    let twitterRef = '';
+    if (info.contact.includes('Name')) {
+      contactInfo += `${info.name} - `;
+    }
+    if (info.contact.includes('email')) {
+      contactInfo += `${info.email}\n`;
+    }
+    if (info.contact.includes('@Twitter')) {
+      let withAt = '';
+      let withoutAt = '';
+      if (info.twitter.charAt(0) === "@") {
+        withAt = info.twitter;
+        withoutAt = info.twitter.substring(1);
+      } else {
+        withoutAt = info.twitter;
+        withAt = `@${info.twitter}`;
+      }
+      contactInfo += `[![twitter][twitter-shield]][twitter-url]`;
+      twitterRef = `[twitter-shield]: https://img.shields.io/badge/-Twitter-black.svg?style=flat-square&logo=twitter&logoColor=FFF&colorB=2AA3EF\n[twitter-url]: https://twitter.com/${withoutAt}`;
+    }
+    contactInfo += `[![LinkedIn][linkedin-shield]][linkedin-url]\n\n[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=1178B3\n[linkedin-url]: ${info.linkedIn}\n${twitterRef}`;
+    return contactInfo;
+}
+
 function saveReadme(readmeData, fileName, filePath) {
-    console.log(readmeData);
     // Create file path if it doesn't already exist
     fs.mkdirSync(filePath, { recursive: true });
     
@@ -362,6 +401,6 @@ function saveReadme(readmeData, fileName, filePath) {
         if (err) {
           return console.log(err);
         }
-        console.log(`Saved ${fileName} to ${filePath+fileName}`);
+        console.success(`Saved ${fileName} to ${filePath+fileName}`);
       });
 }
