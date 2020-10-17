@@ -244,6 +244,96 @@ inquirer
     .catch( error => console.error(error));
 
 // Generate README file
+// 'Title', 'Description', 'Table of Contents', 'Install Instructions', 'Usage Instructions', 'License', 'Contribution Instructions', 'Screenshots', 'Testing Instructions', 'FAQ', 'Contact Info',
 function buildReadme(info) {
-console.log(info);
+// console.log(info);
+let readmeData = '';
+if(info.settings.includes('License')) {
+    readmeData += licenseBadge(info.license);
+}
+if(info.settings.includes('Title')) {
+    readmeData += `\n# ${info.readmeTitle}\n`;
+}
+if(info.settings.includes('Description')) {
+    readmeData += `${info.readmeDescription}\n`;
+}
+if (info.settings.includes('Table of Contents')) {
+    readmeData += buildToC(info);
+}
+if(info.settings.includes('Install Instructions')) {
+    readmeData += buildInstallInstructions(info);
+}
+saveReadme(readmeData, info.fileName, info.filePath);
+}
+
+function licenseBadge(license) {
+    switch (license) {
+        case 'MIT':
+            return '[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](https://opensource.org/licenses/MIT)';
+        case 'Apache 2.0':
+            return '[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](https://opensource.org/licenses/Apache-2.0)';
+        case 'GNU General Public License 3.0':
+            return '[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-yellow.svg?style=flat-square)](https://www.gnu.org/licenses/gpl-3.0)';
+        case 'The Unlicense':
+            return '[![License: Unlicense](https://img.shields.io/badge/license-Unlicense-brightgreen.svg?style=flat-square)](http://unlicense.org/)';
+    }
+}
+
+function buildInstallInstructions(info) {
+    let installInstructions = `## Installation\n`;
+    for (let i = 1; i < 6; i++) {
+        if (info.install0+i) {
+            installInstructions += `${i}. ${info.install0+i}\n`;
+            if (info.install0+i+code) {
+                installInstructions += "```\n" + info.install0+i+code + "\n```";
+            }
+        } else {
+            return installInstructions;
+        }
+    }
+    return installInstructions;
+}
+
+// Build Table of Contents
+function buildToC(info) {
+    let tableOfContents = `## Table of Contents\n`;
+    if (info.settings.includes('Install Instructions')) {
+        tableOfContents += `- [Installation](#installation)\n`;
+    }
+    if (info.settings.includes('Usage Instructions')) {
+        tableOfContents += `- [Usage](#usage)\n`;
+    }
+    if (info.settings.includes('License')) {
+        tableOfContents += `- [License](#license)\n`;
+    }
+    if (info.settings.includes('Contribution Instructions')) {
+        tableOfContents += `- [Contributing](#contributing)\n`;
+    }
+    if (info.settings.includes('Screenshots')) {
+        tableOfContents += `- [Screenshots](#screenshots)\n`;
+    }
+    if (info.settings.includes('Testing Instructions')) {
+        tableOfContents += `- [Tests](#tests)\n`;
+    }
+    if (info.settings.includes('FAQ')) {
+        tableOfContents += `- [FAQ](#faq)\n`;
+    }
+    if (info.settings.includes('Contact Info')) {
+        tableOfContents += `- [Contact](#contact)\n`;
+    }
+    return tableOfContents;
+}
+
+function saveReadme(readmeData, fileName, filePath) {
+    console.log(readmeData);
+    // Create file path if it doesn't already exist
+    fs.mkdirSync(filePath, { recursive: true });
+    
+    // Write the file
+    fs.writeFile(filePath + fileName, readmeData, function(err) {
+        if (err) {
+          return console.log(err);
+        }
+        console.log(`Saved ${fileName} to ${filePath+fileName}`);
+      });
 }
